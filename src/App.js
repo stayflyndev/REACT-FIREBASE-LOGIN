@@ -1,26 +1,44 @@
-import React from 'react';
+import React, {Component}from 'react';
 import logo from './logo.svg';
 import './App.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import Home from './Home';
+import {auth, addUserDocument} from './firebase'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+class App extends Component {
+  constructor(){
+    super();
+
+    this.state={
+      currentUser: null
+    }
+  }
+
+  componentDidMount() {
+    this.unsubsribe = auth.onAuthStateChanged(async (authenticated) => {
+      if (authenticated) {
+        // User is signed in.
+        addUserDocument(authenticated)
+        console.log(authenticated)
+      } else {
+        // No user is signed in.
+      }
+    });
+  }
+
+  componentWillUnmount() {
+    this.unsubsribe();
+  }
+  
+
+  render(){
+    return (
+      <div className="App">
+       <Home />
+      </div>
+    );
+  }
+  }
+
 
 export default App;
